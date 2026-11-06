@@ -35,7 +35,7 @@ test("spawn rolls back a path when the provider fails after publication", async 
   const ctx = {
     tools: { get: () => undefined },
     subagents: {
-      async startContinuable(spec) {
+      async startActivation(spec) {
         registry.addAgent({ id: spec.childId, parentId: "root", status: "idle" });
         if (fail) throw new Error("admission failed after publication");
         return { childId: spec.childId, messageId: "message-1" };
@@ -61,12 +61,34 @@ test("spawn rolls back a path when the provider fails after publication", async 
   assert.equal(value.agent_name, "/root/worker");
 });
 
+test("spawn falls back to the 0.2.0 startContinuable API", async () => {
+  const { config, registry } = setup();
+  let captured;
+  const ctx = {
+    subagents: {
+      async startContinuable(spec) {
+        captured = spec;
+        return { childId: spec.childId, messageId: "legacy-message" };
+      }
+    }
+  };
+  const tool = createSpawnAgentTool(ctx, registry, config);
+  const value = await tool.execute(
+    { task_name: "legacy", message: "Run on the 0.2.0 subagent service." },
+    { agent: parent, signal: new AbortController().signal }
+  );
+  assert.equal(captured.delivery, undefined);
+  assert.equal(captured.request.maxDepth, 3);
+  assert.equal(value.message_id, "legacy-message");
+  assert.equal(value.status, "running");
+});
+
 test("local tool definitions reject malformed model arguments before execution", async () => {
   const { config, registry } = setup();
   const spawn = createSpawnAgentTool({
     tools: { get: () => undefined },
     subagents: {
-      async startContinuable() {
+      async startActivation() {
         throw new Error("must not dispatch malformed arguments");
       }
     }
@@ -101,7 +123,7 @@ test("followup reserves a cold wake, updates task metadata, and validates output
   registry.addAgent({ id: "child", parentId: "root", status: "ready", name: "child", lastTask: "old" });
   const tool = createFollowupTaskTool({
     subagents: {
-      async followup() {
+      async sendMessage() {
         assert.equal(registry.reservationsForRoot("root"), 1);
         return "followup-1";
       }

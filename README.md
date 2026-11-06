@@ -11,7 +11,7 @@ An Ultra-like dynamic multi-agent mode for DeepSeek Harness. With `/ultra <goal>
 
 ## Why this is not Agent Team 2.0
 
-Agent Team is designed for long-lived named members, task boards, DAGs, and member-to-member communication. Ultra is designed for dynamic decomposition and collection within one complex goal. This plugin does not create team files, mailboxes, or a second scheduler. Instead, it builds directly on the continuable subagent runtime in DSH `0.1.1-rc.2`.
+Agent Team is designed for long-lived named members, task boards, DAGs, and member-to-member communication. Ultra is designed for dynamic decomposition and collection within one complex goal. This plugin does not create team files, mailboxes, or a second scheduler. Instead, it builds directly on the continuable subagent runtime in DSH 0.2.x (`0.2.0-rc.1` or newer).
 
 After `/ultra` activates a task, the plugin adds three scoped tools to that agent tree:
 
@@ -41,16 +41,16 @@ The remaining capabilities come directly from DSH:
 
 ## Installation
 
-DeepSeek Harness `0.1.1-rc.2` is required. Install from npm:
+DeepSeek Harness `0.2.0-rc.1` or newer (0.2.x) is required. Install from npm:
 
 ```bash
-dsh plugin --profile web add dsh-codex-ultra-mode@0.1.0
+dsh plugin --profile web add dsh-codex-ultra-mode@0.2.0
 ```
 
 If `dsh` is not on `PATH`:
 
 ```bash
-npx @deepseek-ai/dsh@0.1.1-rc.2 plugin --profile web add dsh-codex-ultra-mode@0.1.0
+npx @deepseek-ai/dsh@0.2.1-rc.3 plugin --profile web add dsh-codex-ultra-mode@0.2.0
 ```
 
 Validate the composed profile and restart DSH Web:
@@ -130,7 +130,7 @@ childDenyTools: [apply_patch, github_create_pull_request]
 - Single-writer mode can block only standard tools and exact names listed in `childDenyTools`; it cannot automatically infer side effects for arbitrary third-party tools. If you disable it, you must ensure write scopes do not overlap.
 - The `wait_agent` revision mirror is a bounded summary, not a complete audit log. If an old cursor overflows, the result includes `truncated=true`; inspect the original DSH sessions or recollect conclusions.
 - `wait_agent.agent_ids` controls exact wake-up targets and status snapshots only. Because revisions are global across the whole tree, returned `events` always include every tree event after the cursor, preventing updates from other branches from being skipped when targets change.
-- The current implementation depends on the DSH prerelease API `0.1.1-rc.2`. Rerun the integration tests when upgrading DSH.
+- The current implementation targets the DSH 0.2.x prerelease API (`0.2.0-rc.1` and newer are supported; `0.2.0-rc.1`, `0.2.0-rc.2`, and `0.2.1-alpha.1` still use `startContinuable`). Rerun the integration tests when upgrading DSH.
 
 ## Development verification
 

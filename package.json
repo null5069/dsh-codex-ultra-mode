@@ -1,6 +1,6 @@
 {
   "name": "dsh-codex-ultra-mode",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Ultra-like dynamic multi-agent orchestration mode for DeepSeek Harness",
   "author": "null5069",
   "license": "MIT",
@@ -56,10 +56,10 @@
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.1",
-    "@deepseek-ai/dsh-agent": "^0.1.1-rc.2",
-    "@deepseek-ai/dsh-commands": "^0.1.1-rc.2",
-    "@deepseek-ai/dsh-subagent": "^0.1.1-rc.2",
-    "@deepseek-ai/dsh-system-prompt": "^0.1.1-rc.2"
+    "@deepseek-ai/dsh-agent": "^0.2.0-rc.1",
+    "@deepseek-ai/dsh-commands": "^0.2.0-rc.1",
+    "@deepseek-ai/dsh-subagent": "^0.2.0-rc.1",
+    "@deepseek-ai/dsh-system-prompt": "^0.2.0-rc.1"
   },
   "peerDependenciesMeta": {
     "@deepseek-ai/cordis": { "optional": true },
@@ -69,6 +69,7 @@
     "@deepseek-ai/dsh-system-prompt": { "optional": true }
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-tools": "0.1.1-rc.2"
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-tools": "0.2.1-rc.3"
   }
 }

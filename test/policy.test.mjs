@@ -5,7 +5,8 @@ import {
   buildUltraPolicy,
   invokedUltraGoal,
   normalizeTaskName,
-  resolveConfig
+  resolveConfig,
+  ULTRA_SOURCE_KIND
 } from "../lib/policy.js";
 
 const userMessage = (text, kind = "user") => ({
@@ -39,6 +40,14 @@ test("policy renders resolved limits and single-writer contract", () => {
   assert.match(text, /depth 4/u);
   assert.match(text, /Single-writer safety is enabled/u);
   assert.match(text, /wait_agent/u);
+});
+
+test("plugin notices carry a producer-owned source kind", () => {
+  // DSH 0.2.x refuses the retired V3 { kind: "plugin", plugin: ... } wrapper
+  // at session admission with "format v4 message requires a producer-owned
+  // source kind"; plugin notices must carry plugin:<name> instead.
+  assert.equal(ULTRA_SOURCE_KIND, "plugin:dsh-codex-ultra-mode");
+  assert.notEqual(ULTRA_SOURCE_KIND, "plugin");
 });
 
 test("activation directive preserves the concrete goal", () => {

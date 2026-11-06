@@ -31,15 +31,15 @@ const ctx = {
     }
   },
   subagents: {
-    async startContinuable(spec) {
+    async startActivation(spec) {
       starts.push(spec);
       return { childId: spec.childId, messageId: "initial-message" };
     },
-    async followup(parent, childId, content, options) {
+    async sendMessage(parent, childId, content, options) {
       followups.push({ parent, childId, content, options });
       return "followup-message";
     },
-    async drainContinuableChildren(parent, childIds) {
+    async drainChildren(parent, childIds) {
       drains.push({ parent, childIds });
       if (drains.length <= 2) {
         await new Promise((_resolve, reject) => pendingDrainRejectors.push(reject));
@@ -107,6 +107,7 @@ const decision = await preStep(
   async () => ({ kind: "enter", messages })
 );
 assert.equal(decision.kind, "enter");
+assert.equal(decision.messages.at(-1).source.kind, "plugin:dsh-codex-ultra-mode");
 assert.equal(scopedTools.length, 3, "pre-step activation must be idempotent");
 assert.deepEqual(scopedTools.map((tool) => tool.name).sort(), [
   "followup_task",
@@ -124,6 +125,7 @@ assert.equal(spawned.status, "running");
 assert.equal(starts.length, 1);
 assert.equal(starts[0].provider, "spawn");
 assert.equal(starts[0].request.maxDepth, 3);
+assert.equal(starts[0].delivery, "parent");
 
 const childScopedTools = [];
 const child = {
@@ -155,7 +157,7 @@ for (const listener of listeners.get("agent/turn-stopping") ?? []) {
   await listener({ agent, turn: 1, signal: new AbortController().signal });
 }
 assert.equal(steered.length, 1);
-assert.equal(steered[0].source.kind, "plugin");
+assert.equal(steered[0].source.kind, "plugin:dsh-codex-ultra-mode");
 assert.equal(steered[0].source.summary, "Ultra completion barrier");
 const followup = scopedTools.find((tool) => tool.name === "followup_task");
 const followed = await followup.execute(

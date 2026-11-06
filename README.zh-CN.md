@@ -11,7 +11,7 @@
 
 ## 为什么不是 Agent Team 2.0
 
-Agent Team 适合长期命名成员、任务板、DAG 和成员互聊；Ultra 适合一个复杂目标内的动态拆分和回收。这个插件不创建团队文件、邮箱或第二套 scheduler，而是直接使用 DSH `0.1.1-rc.2` 的 continuable subagent runtime。
+Agent Team 适合长期命名成员、任务板、DAG 和成员互聊；Ultra 适合一个复杂目标内的动态拆分和回收。这个插件不创建团队文件、邮箱或第二套 scheduler，而是直接使用 DSH 0.2.x（`0.2.0-rc.1` 及以上）的 continuable subagent runtime。
 
 插件只在 `/ultra` 激活后，为当前 Agent 树增加三个作用域工具：
 
@@ -41,16 +41,16 @@ Agent Team 适合长期命名成员、任务板、DAG 和成员互聊；Ultra �
 
 ## 安装
 
-要求 DeepSeek Harness `0.1.1-rc.2`。安装 npm 发布包：
+要求 DeepSeek Harness `0.2.0-rc.1` 或更新的 0.2.x。安装 npm 发布包：
 
 ```bash
-dsh plugin --profile web add dsh-codex-ultra-mode@0.1.0
+dsh plugin --profile web add dsh-codex-ultra-mode@0.2.0
 ```
 
 如果 `dsh` 不在 `PATH`：
 
 ```bash
-npx @deepseek-ai/dsh@0.1.1-rc.2 plugin --profile web add dsh-codex-ultra-mode@0.1.0
+npx @deepseek-ai/dsh@0.2.1-rc.3 plugin --profile web add dsh-codex-ultra-mode@0.2.0
 ```
 
 验证配置并重启 DSH Web：
@@ -130,7 +130,7 @@ childDenyTools: [apply_patch, github_create_pull_request]
 - 默认单写者模式只强制阻断标准工具和 `childDenyTools` 中列出的名称，无法自动识别任意第三方工具的副作用。关闭后必须自行确保写入范围不重叠。
 - `wait_agent` 的 revision 事件镜像是有界摘要，不是完整审计日志；旧游标溢出时返回 `truncated=true`，应回看 DSH 原始会话或重新收集结论。
 - `wait_agent.agent_ids` 只控制精确唤醒目标和状态快照；由于 revision 是整棵树的全局游标，返回的 `events` 始终包含该游标之后的全部树事件，避免切换目标时跳过其他分支更新。
-- 当前依赖 DSH 预发布 API `0.1.1-rc.2`；升级 DSH 时应重新运行集成测试。
+- 当前适配 DSH 0.2.x 预发布 API（`0.2.0-rc.1` 及以上均支持；`0.2.0-rc.1`、`0.2.0-rc.2`、`0.2.1-alpha.1` 仍使用 `startContinuable`）；升级 DSH 时应重新运行集成测试。
 
 ## 开发验证
 
